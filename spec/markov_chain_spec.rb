@@ -13,6 +13,15 @@ describe MarkovChain do
     @mc.graph.edge_weight("start","end").should == 1
   end
   
+  it "should terminate the cycle" do
+    @mc.graph.add_node("start")
+    @mc.graph.add_node("end")
+    @mc.increment_probability("end","start")
+    @mc.increment_probability("start","end")
+    walk = @mc.random_walk("start")
+    walk.size.should < 10
+  end
+  
   it "should increment graph edge weight with increment_probability" do
     @mc.graph.add_node("start")
     @mc.graph.add_node("end")

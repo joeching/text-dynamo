@@ -17,7 +17,8 @@ class WeightedDirectedGraph
   end
   
   def random_node
-    @vertices.keys[(@vertices.size * rand).to_i]
+    count = 0
+    @vertices.values.select{|v| v.spout && count+=1}[(count * rand).to_i].value
   end
   
   def connect(a,b,weight=1)
@@ -40,16 +41,19 @@ class WeightedDirectedGraph
   end
   
   def out_degree_of(name)
-    @vertices[name].edges.size
+    @vertices[name].outgoing.size
   end
 end
 
 class Vertex
-  attr_accessor :value, :edges
+  attr_accessor :value, :outgoing, :incoming, :sink, :spout
   
   def initialize(value)
     @value = value
-    @edges = Set.new
+    @outgoing = Set.new
+    @incoming = Set.new
+    @sink = true
+    @spout = true
   end
   
   def eql?(other)
@@ -62,16 +66,17 @@ class Vertex
   end
   
   def endpoint?
-    @edges.size == 0
+    @outgoing.size == 0
   end
   
   def random_jump(visited)
     largest = 0
     current = nil
-    @edges.each do |edge|
+    @outgoing.each do |edge|
       val = edge.weight * rand
       node = edge.destination
       # make weight less and less noticable if we continually visit the node
+      # this also prevents cycles from happening
       val = val - (rand * visited[node]) if visited[node]
       if val > largest
         largest = val
@@ -79,6 +84,16 @@ class Vertex
       end
     end
     current && current.destination
+  end
+  
+  def add_outgoing_edge(edge)
+    @outgoing.add(edge)
+    @sink = false
+  end
+  
+  def add_incoming_edge(edge)
+    @incoming.add(edge)
+    @spout = false
   end
 end
 
@@ -92,7 +107,8 @@ class DirectedEdge
   end
 
   def connect
-    @origin.edges.add(self)
+    @origin.add_outgoing_edge(self)
+    @destination.add_incoming_edge(self)
   end
 
   def eql?(other)
