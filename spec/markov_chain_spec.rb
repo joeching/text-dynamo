@@ -6,6 +6,7 @@ describe MarkovChain do
   end
   
   it "should create graph nodes with increment_probability" do
+    build_graph
     @mc.increment_probability("start","end")
     @mc.graph.should satisfy { |g|  g.contains?("a")}
     @mc.graph.should satisfy { |g|  g.contains?("b")}
@@ -28,7 +29,7 @@ describe MarkovChain do
     walk.last.should == "end"
     walk[1].should satisfy { |x|  %w(a b).include?(x)}
   end
-
+  
   it "should use specified start node" do
     build_graph
     walk = @mc.random_walk("start")
