@@ -27,4 +27,8 @@ class TextGenerator
   def generate(start)
     @markov_chain.random_walk(start).join(" ")
   end
+  
+  def generate_paragraph
+    (0..10).map{@markov_chain.random_walk.join(" ")}.join("  ")
+  end
 end

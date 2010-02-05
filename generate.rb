@@ -16,4 +16,8 @@ end
 
 text_generator = TextGenerator.new
 text_generator.seed(seed_text)
+puts "Generated sentence:"
 puts text_generator.generate(ARGV[1] || "Nearly")
+puts ""
+puts "Generated paragraph:"
+puts text_generator.generate_paragraph
