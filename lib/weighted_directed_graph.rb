@@ -1,8 +1,6 @@
 require 'set'
 
 class WeightedDirectedGraph
-  attr_accessor :edges, :vertices
-  
   def initialize
     @vertices = Hash.new
     @edges = Hash.new
@@ -21,7 +19,7 @@ class WeightedDirectedGraph
     @vertices.values.select{|v| v.spout && count+=1}[(count * rand).to_i].value
   end
   
-  def connect(a,b,weight=1)
+  def connect(a, b, weight=1)
     e = DirectedEdge.new(self[a], self[b], weight)
     @edges[e] ||= e
     @edges[e].connect
@@ -46,7 +44,8 @@ class WeightedDirectedGraph
 end
 
 class Vertex
-  attr_accessor :value, :outgoing, :incoming, :sink, :spout
+  attr_accessor :outgoing, :incoming
+  attr_reader :value, :sink, :spout
   
   def initialize(value)
     @value = value
@@ -100,7 +99,8 @@ class Vertex
 end
 
 class DirectedEdge
-  attr_accessor :weight, :origin, :destination
+  attr_accessor :weight
+  attr_reader :origin, :destination
   
   def initialize(origin, destination, weight = 1)
     @origin = origin
