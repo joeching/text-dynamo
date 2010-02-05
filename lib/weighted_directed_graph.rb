@@ -50,6 +50,8 @@ class Vertex
   
   def initialize(value)
     @value = value
+    # memoize hash
+    @hash = @value.hash
     @outgoing = Set.new
     @incoming = Set.new
     @sink = true
@@ -62,7 +64,7 @@ class Vertex
   end
   
   def hash
-    @value.hash
+    @hash
   end
   
   def endpoint?
@@ -77,7 +79,7 @@ class Vertex
       node = edge.destination
       # make weight less and less noticable if we continually visit the node
       # this also prevents cycles from happening
-      val = val - (rand * visited[node]) if visited[node]
+      val = val - (rand * 2 * visited[node]) if visited[node]
       if val > largest
         largest = val
         current = edge
@@ -103,6 +105,8 @@ class DirectedEdge
   def initialize(origin, destination, weight = 1)
     @origin = origin
     @destination = destination
+    # memoize hash
+    @hash = "#{@origin.value}#{@destination.value}".hash
     @weight = weight
   end
 
@@ -117,6 +121,6 @@ class DirectedEdge
   end
   
   def hash
-    (@origin.value + @destination.value).hash
+    @hash
   end
 end
